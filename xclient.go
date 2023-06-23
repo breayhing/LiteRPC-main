@@ -118,7 +118,7 @@ func (xc *xClient) getServers() {
 
 func (xc *xClient) Call(ctx context.Context, serviceMethod string, argv, replyv interface{}) error {
 	var idx int
-
+	//获取服务地址
 	if len(xc.addrs) == 0 {
 		return errors.New("rpc xclient error: not server available")
 	}

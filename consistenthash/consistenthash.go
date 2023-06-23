@@ -7,8 +7,8 @@ import (
 )
 
 type ConsistentHash struct {
-	replica int
-	keys    []int // sorted
+	replica int   // 虚拟节点倍数
+	keys    []int // 哈希环
 	hashMap map[int]string
 }
 
@@ -19,7 +19,7 @@ func NewConsistentHash(replica int) *ConsistentHash {
 	}
 }
 
-// Add key to hash
+// 增加节点
 func (c *ConsistentHash) Add(key string) {
 	for i := 0; i < c.replica; i++ {
 		hash := int(crc32.ChecksumIEEE([]byte(strconv.Itoa(i) + key)))
@@ -29,7 +29,7 @@ func (c *ConsistentHash) Add(key string) {
 	sort.Ints(c.keys)
 }
 
-// Get key
+// 获取key对应的节点
 func (c *ConsistentHash) Get(key string) string {
 	if len(c.keys) == 0 {
 		return ""

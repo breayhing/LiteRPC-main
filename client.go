@@ -11,15 +11,15 @@ import (
 
 type call struct {
 	seq    uint64
-	done   chan struct{} // signal call finish
-	err    error         // calling fail
-	replyv interface{}   // response data
+	done   chan struct{} // 管道 ，用于同步
+	err    error         // 错误处理
+	replyv interface{}   // 返回值
 }
 
 type client struct {
-	mu        sync.Mutex
-	cc        codec.Codec
-	header    *codec.Header // sending is mutually exclusive, all request share the save header
+	mu        sync.Mutex    // 使用互斥锁保护字段
+	cc        codec.Codec   // 编解码器，用于发送请求
+	header    *codec.Header // 请求头
 	pending   map[uint64]*call
 	available bool
 }
@@ -39,6 +39,7 @@ func (c *client) Close() error {
 
 func (c *client) Dial(addr string, typ codec.Type) error {
 	opt := codec.GetOption(typ)
+	log.Println("opt:", opt, "addr:", addr, "typ:", typ, "codec:", "codec")
 	newCodecFunc, err := codec.ParseOption(opt)
 	if err != nil {
 		log.Println("rpc client: parsing option error:", err)
@@ -53,6 +54,7 @@ func (c *client) Dial(addr string, typ codec.Type) error {
 	writeBytes := 0
 	for writeBytes < len(opt) {
 		n, err := conn.Write(opt)
+		log.Println("writeBytes equals:", n, "err:", err)
 		if err != nil {
 			log.Println("rpc client: write option error:", err)
 			return err

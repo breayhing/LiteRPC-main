@@ -17,16 +17,16 @@ type Server struct {
 	serviceMap    sync.Map
 }
 
-func NewServer(handleTimeout time.Duration) *Server {
+func NewServer(timeout time.Duration) *Server {
 	return &Server{
-		handleTimeout: handleTimeout,
+		handleTimeout: timeout,
 	}
 }
 
 func (s *Server) Register(recv interface{}) error {
 	serve := NewService(recv)
-	_, dup := s.serviceMap.LoadOrStore(serve.name, serve)
-	if dup {
+	_, duplicate := s.serviceMap.LoadOrStore(serve.name, serve)
+	if duplicate {
 		log.Println("rpc server: service already loaded: " + serve.name)
 		return errors.New("rpc server: service already loaded: " + serve.name)
 	}
@@ -45,7 +45,7 @@ func (s *Server) Accept(lis net.Listener) {
 }
 
 func (s *Server) ServeConn(conn io.ReadWriteCloser) {
-	// ****************************** read option ******************************
+	//读取option
 	opt := make([]byte, 5)
 	for readBytes := 0; readBytes < 5; {
 		n, err := conn.Read(opt[readBytes:])
@@ -57,12 +57,14 @@ func (s *Server) ServeConn(conn io.ReadWriteCloser) {
 		}
 		readBytes += n
 	}
-	// ****************************** creating corresponding codec ******************************
+	//进行协议解析
 	newCodecFunc, err := codec.ParseOption(opt)
+	log.Println("option: ", opt)
 	if err != nil {
 		log.Println("rpc server: parsing option error")
 		return
 	}
+	log.Println("newCodecFunc: ", newCodecFunc)
 	s.ServeCodec(newCodecFunc(conn))
 }
 
@@ -71,13 +73,13 @@ func (s *Server) ServeCodec(c codec.Codec) {
 	var err error
 	for {
 		done := make(chan struct{})
-		// ****************************** read header ******************************
+		// 读取头部
 		err = c.ReadHeader(header)
 		if err != nil {
 			log.Println("rpc server: parsing header error")
 			return
 		}
-		// ****************************** get service method ******************************
+		// 获取服务方法
 		serviceMethod := header.ServiceMethod
 		serviceMethodStrings := strings.Split(serviceMethod, ".")
 		if len(serviceMethodStrings) != 2 {
@@ -100,7 +102,7 @@ func (s *Server) ServeCodec(c codec.Codec) {
 		}
 		go func() {
 			defer close(done)
-			// ****************************** get argv and replyv ******************************
+			// 获取输入输出参数
 			argv := methodTyp.newArgv()
 			replyv := methodTyp.newReplyv()
 			body := argv.Addr().Interface()
@@ -118,7 +120,7 @@ func (s *Server) ServeCodec(c codec.Codec) {
 			} else {
 				replyvi = replyv.Interface()
 			}
-			// ****************************** send response ******************************
+			// 发送响应
 			err = c.Write(header, replyvi)
 			if err != nil {
 				log.Println("rpc server: write response error")
@@ -126,6 +128,7 @@ func (s *Server) ServeCodec(c codec.Codec) {
 			}
 		}()
 		select {
+		// 超时处理
 		case <-time.After(s.handleTimeout):
 			log.Println("rpc server: handle timeout")
 			err = errors.New("rpc server: handle timeout")
@@ -138,6 +141,7 @@ func (s *Server) ServeCodec(c codec.Codec) {
 	}
 }
 
+// 服务注册
 func (s *Server) PostRegistry(addrRegistry string, lis net.Listener) error {
 	httpClient := &http.Client{}
 	req, err := http.NewRequest(http.MethodPost, addrRegistry, nil)
