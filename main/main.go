@@ -61,7 +61,9 @@ func main() {
 	go startServer(addr2, addrReg)
 	// 使用随机负载均衡
 	// 使用持续连接
+
 	cli := LiteRPC.NewXClient(LiteRPC.ConsistentHash, addrReg)
+	time.Sleep(time.Second * 2) // 等待服务端注册完成
 	var ret int
 	arg := &Arg{
 		Num1: 10,
