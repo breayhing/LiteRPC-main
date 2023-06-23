@@ -23,7 +23,7 @@ Options:
 	1: concat
 	2: compare
 	3: length
-	4: substring
+	4: revert
 	5: replace
   example:
   	go run . -p 8081 -l localhost -m 1
@@ -44,6 +44,12 @@ func terminalMessagePrint(argc int) {
 	for k, v := range os.Args[1:] {
 		fmt.Printf("args[%v]=[%v]\n", k, v)
 	}
+	terminalFunc(argc)
+	return
+}
+
+// 用于根据参数对应调用不同的方法
+func terminalFunc(argc int) {
 	if argc == 0 {
 		fmt.Println("wrong useage")
 		fmt.Fprint(os.Stderr, serverHelp)
@@ -53,9 +59,4 @@ func terminalMessagePrint(argc int) {
 			fmt.Fprint(os.Stderr, serverHelp)
 		}
 	}
-	return
-}
-
-// 用于根据参数对应调用不同的方法
-func terminalFunc(argc int) {
 }
