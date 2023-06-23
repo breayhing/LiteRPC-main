@@ -123,16 +123,20 @@ func (xc *xClient) Call(ctx context.Context, serviceMethod string, argv, replyv 
 		return errors.New("rpc xclient error: not server available")
 	}
 	var addr string
+	log.Println("xc.mode:", xc.mode)
 	switch xc.mode {
 	case RandomSelect:
+		log.Println("random select")
 		idx = xc.r.Intn(math.MaxInt32-1) % len(xc.addrs)
 		addr = xc.addrs[idx]
 	case RoundRobinSelect:
 		idx = xc.index % len(xc.addrs)
 		xc.index += 1
 		addr = xc.addrs[idx]
+		log.Println("round robin select")
 	case ConsistentHash:
 		addr = xc.ch.Get(fmt.Sprintf("%v+%s", argv, serviceMethod))
+		log.Println("consistent hash select")
 	}
 	cli := xc.clients[addr]
 	return cli.Call(ctx, serviceMethod, argv, replyv)

@@ -8,15 +8,15 @@ import (
 
 type gobCodec struct {
 	conn io.ReadWriteCloser
-	enc *gob.Encoder
-	dec *gob.Decoder
+	enc  *gob.Encoder
+	dec  *gob.Decoder
 }
 
 func NewGobCodec(conn io.ReadWriteCloser) Codec {
 	return &gobCodec{
 		conn: conn,
-		enc: gob.NewEncoder(conn),
-		dec: gob.NewDecoder(conn),
+		enc:  gob.NewEncoder(conn),
+		dec:  gob.NewDecoder(conn),
 	}
 }
 

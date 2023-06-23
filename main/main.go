@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-type Foo struct{}
+type Mathservice struct{}
 
 type Arg struct {
 	Num1       int
@@ -18,7 +18,7 @@ type Arg struct {
 	HandleTime float32
 }
 
-func (f *Foo) Double(arg Arg, reply *int) error {
+func (f *Mathservice) Double(arg Arg, reply *int) error {
 	*reply = arg.Num1 + arg.Num2
 	time.Sleep(time.Second * time.Duration(arg.HandleTime))
 	return nil
@@ -32,7 +32,7 @@ func startServer(addr chan<- string, addrReg string) {
 	}
 	log.Println("server runs on", l.Addr().String())
 	server := LiteRPC.NewServer(time.Second)
-	_ = server.Register(&Foo{})
+	_ = server.Register(&Mathservice{})
 	_ = server.PostRegistry(addrReg, l)
 	server.Accept(l)
 }
@@ -59,11 +59,10 @@ func main() {
 	addrReg := "http://localhost:9999/LiteRPC"
 	go startServer(addr1, addrReg)
 	go startServer(addr2, addrReg)
-	// 使用随机负载均衡
 	// 使用持续连接
 
-	cli := LiteRPC.NewXClient(LiteRPC.ConsistentHash, addrReg)
-	time.Sleep(time.Second * 2) // 等待服务端注册完成
+	cli := LiteRPC.NewXClient(LiteRPC.RoundRobinSelect, addrReg) //这里选择使用的负载均衡算法
+	time.Sleep(time.Second * 2)                                  // 等待服务端注册完成
 	var ret int
 	arg := &Arg{
 		Num1: 10,
@@ -75,7 +74,7 @@ func main() {
 		arg.Num1 = i
 		arg.Num2 = i * 2
 		arg.HandleTime = 0.5
-		err = cli.Call(ctx, "Foo.Double", arg, &ret)
+		err = cli.Call(ctx, "Mathservice.Double", arg, &ret)
 		if err != nil {
 			fmt.Println(err.Error())
 			continue
@@ -87,7 +86,7 @@ func main() {
 		arg.Num1 = i
 		arg.Num2 = i * 2
 		arg.HandleTime = 0
-		err = cli.Call(ctx, "Foo.Double", arg, &ret)
+		err = cli.Call(ctx, "Mathservice.Double", arg, &ret)
 		if err != nil {
 			fmt.Println(err.Error())
 			continue
