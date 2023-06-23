@@ -10,20 +10,6 @@ import (
 	"time"
 )
 
-type Mathservice struct{}
-
-type Arg struct {
-	Num1       int
-	Num2       int
-	HandleTime float32
-}
-
-func (f *Mathservice) Double(arg Arg, reply *int) error {
-	*reply = arg.Num1 + arg.Num2
-	time.Sleep(time.Second * time.Duration(arg.HandleTime))
-	return nil
-}
-
 // 开启服务端
 func startServer(addr chan<- string, addrReg string) {
 	l, err := net.Listen("tcp", ":0")
@@ -49,6 +35,10 @@ func startRegistry(addr chan<- string) {
 }
 
 func main() {
+	// 用于实现命令行参数的解析
+	// var argc = len(os.Args)-1
+	// terminalMessagePrint(argc)
+
 	var err error
 	addr0 := make(chan string)
 	addr1 := make(chan string)
@@ -64,7 +54,7 @@ func main() {
 	cli := LiteRPC.NewXClient(LiteRPC.RoundRobinSelect, addrReg) //这里选择使用的负载均衡算法
 	time.Sleep(time.Second * 2)                                  // 等待服务端注册完成
 	var ret int
-	arg := &Arg{
+	arg := &MathArgs{
 		Num1: 10,
 		Num2: 20,
 	}
