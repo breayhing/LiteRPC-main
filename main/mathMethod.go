@@ -20,8 +20,6 @@ const (
 	MathModeMod
 )
 
-//想法：使用数字来对应调用的方法
-
 func (f *Mathservice) Double(arg MathArgs, reply *int) error {
 	*reply = arg.Num1 + arg.Num2
 	time.Sleep(time.Second * time.Duration(arg.HandleTime))

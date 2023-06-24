@@ -36,7 +36,7 @@ const (
 	ConsistentHash
 )
 
-func NewXClient(s SelectMode, regAddr string) *xClient {
+func NewXClient(s SelectMode, regAddr string, codecWay string) *xClient {
 	c := &xClient{
 		addrRegistry: regAddr,
 		timeout:      60 * time.Second,
@@ -47,7 +47,7 @@ func NewXClient(s SelectMode, regAddr string) *xClient {
 	}
 	c.index = c.r.Intn(math.MaxInt32 - 1)
 	c.ch = consistenthash.NewConsistentHash(10)
-	go c.getServers()
+	go c.getServers(codecWay)
 	return c
 }
 
@@ -96,14 +96,20 @@ func (xc *xClient) DialServers(servers []string, co codec.Type) (n int, err erro
 	return
 }
 
-func (xc *xClient) getServers() {
+func (xc *xClient) getServers(codecWay string) {
 	for {
 		resp, err := http.Get(xc.addrRegistry)
 		if err == nil {
 			serversString := resp.Header.Get("rpc-servers")
 			servers := strings.Split(serversString, ",")
-
-			_, _ = xc.DialServers(servers, codec.GobCodec)
+			switch codecWay {
+			case "gob":
+				//这里选择编码方式为gob
+				_, _ = xc.DialServers(servers, codec.GobCodec)
+			case "json":
+				//这里选择编码方式为json
+				_, _ = xc.DialServers(servers, codec.JsonCodec)
+			}
 		}
 		if xc.isClose {
 			break

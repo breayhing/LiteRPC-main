@@ -21,6 +21,7 @@ func NewGobCodec(conn io.ReadWriteCloser) Codec {
 }
 
 func (c *gobCodec) ReadHeader(header *Header) error {
+	log.Println("codec with gob")
 	return c.dec.Decode(header)
 }
 

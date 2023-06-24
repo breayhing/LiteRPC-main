@@ -14,32 +14,24 @@ Options:
   -p, --port    Server listen port
   -d, --default Server listen default port:(ip:localhost  ,  port:8081), mathMode add
   -m, --mathMode Server run math mode
-	1: add
-	2: sub
-	3: mul
-	4: div
-	5: mod
+	1: add   simply add two numbers
+	2: sub	 simply sub two numbers
+	3: mul	 simply mul two numbers
+	4: div	 simply div two numbers
+	5: mod	 simply mod two numbers
   -s, --stringMode Server run string mode
-	1: concat
-	2: compare
-	3: length
-	4: revert
-	5: replace
+	1: concat   concat two strings
+	2: compare  compare two strings and return the bigger one	
+	3: length	add two strings and return the length of the result string 
+	4: tolower  add two strings and return the result string with all lower case
+	5: toupper  add two strings and return the result string with all upper case
   example:
   	go run . -p 8081 -l localhost -m 1
-  	it means server listen localhost:8081 and run math mode add
+  	it means server listen localhost:8081 and run math mode add, args is defined in mathMethod.go
 `
 
-var clientHelp = `
-Usage: go run main.go [options]
-
-Options:
-  -h, --help    Show help message
-  -i, --ip that client connect to
-  -p, --port that client connect to
-`
-
-func terminalMessagePrint(argc int) {
+func terminalMessagePrint() {
+	var argc = len(os.Args) - 1
 	fmt.Println("命令行参数数量:", argc) //不包括初始执行路径
 	for k, v := range os.Args[1:] {
 		fmt.Printf("args[%v]=[%v]\n", k, v)
@@ -54,9 +46,7 @@ func terminalFunc(argc int) {
 		fmt.Println("wrong useage")
 		fmt.Fprint(os.Stderr, serverHelp)
 	}
-	if argc == 1 {
-		if os.Args[1] == "-h" || os.Args[1] == "--help" {
-			fmt.Fprint(os.Stderr, serverHelp)
-		}
+	if os.Args[1] == "-h" || os.Args[1] == "--help" {
+		fmt.Fprint(os.Stderr, serverHelp)
 	}
 }

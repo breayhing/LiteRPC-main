@@ -36,9 +36,9 @@ func startRegistry(addr chan<- string) {
 
 func main() {
 	// 用于实现命令行参数的解析
-	// var argc = len(os.Args)-1
-	// terminalMessagePrint(argc)
 
+	terminalMessagePrint()
+	codeWay := "json"
 	var err error
 	addr0 := make(chan string)
 	addr1 := make(chan string)
@@ -46,19 +46,21 @@ func main() {
 
 	go startRegistry(addr0)
 	<-addr0
-	addrReg := "http://localhost:9999/LiteRPC"
+	addrReg := "http://localhost:9999/LiteRPC" // 注册中心地址
 	go startServer(addr1, addrReg)
 	go startServer(addr2, addrReg)
 	// 使用持续连接
-
-	cli := LiteRPC.NewXClient(LiteRPC.RoundRobinSelect, addrReg) //这里选择使用的负载均衡算法
-	time.Sleep(time.Second * 2)                                  // 等待服务端注册完成
+	time.Sleep(time.Second * 2)                                           //等待服务端启动
+	cli := LiteRPC.NewXClient(LiteRPC.RoundRobinSelect, addrReg, codeWay) //这里选择使用的负载均衡算法
+	time.Sleep(time.Second * 2)                                           // 等待服务端注册完成
 	var ret int
+
 	arg := &MathArgs{
 		Num1: 10,
 		Num2: 20,
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+
 	fmt.Println("first call start")
 	for i := 0; i < 5; i++ {
 		arg.Num1 = i
