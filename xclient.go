@@ -1,8 +1,8 @@
-package LiteRPC
+package SRPC
 
 import (
-	"LiteRPC/codec"
-	"LiteRPC/consistenthash"
+	"SRPC/codec"
+	"SRPC/consistenthash"
 	"context"
 	"errors"
 	"fmt"

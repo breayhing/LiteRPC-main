@@ -1,4 +1,4 @@
-package LiteRPC
+package SRPC
 
 import (
 	"go/ast"

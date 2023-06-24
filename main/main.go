@@ -1,7 +1,7 @@
 package main
 
 import (
-	"LiteRPC"
+	"SRPC"
 	"context"
 	"fmt"
 	"log"
@@ -17,7 +17,7 @@ func startServer(addr chan<- string, addrReg string) {
 		log.Println("network error", err)
 	}
 	log.Println("server runs on", l.Addr().String())
-	server := LiteRPC.NewServer(time.Second)
+	server := SRPC.NewServer(time.Second)
 	// 注册服务
 	_ = server.Register(&Stringservice{})
 	_ = server.Register(&Mathservice{})
@@ -32,7 +32,7 @@ func startRegistry(addr chan<- string) {
 	}
 	log.Println("registry runs on", l.Addr().String())
 	addr <- l.Addr().String()
-	_ = LiteRPC.NewRegistry()
+	_ = SRPC.NewRegistry()
 	log.Fatal(http.Serve(l, nil))
 }
 
@@ -47,13 +47,13 @@ func main() {
 
 	go startRegistry(addr0)
 	<-addr0
-	addrReg := "http://localhost:9999/LiteRPC" // 注册中心地址
+	addrReg := "http://localhost:9999/SRPC" // 注册中心地址
 	go startServer(addr1, addrReg)
 	go startServer(addr2, addrReg)
 	// 使用持续连接
-	time.Sleep(time.Second * 2)                                           //等待服务端启动
-	cli := LiteRPC.NewXClient(LiteRPC.RoundRobinSelect, addrReg, codeWay) //这里选择使用的负载均衡算法
-	time.Sleep(time.Second * 2)                                           // 等待服务端注册完成
+	time.Sleep(time.Second * 2)                                     //等待服务端启动
+	cli := SRPC.NewXClient(SRPC.RoundRobinSelect, addrReg, codeWay) //这里选择使用的负载均衡算法
+	time.Sleep(time.Second * 2)                                     // 等待服务端注册完成
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 
@@ -70,6 +70,7 @@ func main() {
 	}
 	fmt.Println("second call start")
 	for i := 0; i < 5; i++ {
+		stringArg.HandleTime = 0
 		err = cli.Call(ctx, "Stringservice.Compare", stringArg, &stringRet)
 		if err != nil {
 			fmt.Println(err.Error())

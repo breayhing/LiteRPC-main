@@ -1,7 +1,7 @@
-package LiteRPC
+package SRPC
 
 import (
-	"LiteRPC/codec"
+	"SRPC/codec"
 	"context"
 	"errors"
 	"log"

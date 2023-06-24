@@ -26,7 +26,7 @@ const (
 var stringArg = &StringArgs{
 	String1:    "hELLo",
 	String2:    "wORLd",
-	HandleTime: 1,
+	HandleTime: 0,
 }
 var stringRet string
 

@@ -24,8 +24,9 @@ const (
 
 // 执行参数
 var mathArg = &MathArgs{
-	Num1: 10,
-	Num2: 20,
+	Num1:       10,
+	Num2:       20,
+	HandleTime: 0,
 }
 var mathRet int //返回值
 

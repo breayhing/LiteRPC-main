@@ -1,4 +1,4 @@
-package LiteRPC
+package SRPC
 
 import (
 	"reflect"
@@ -9,7 +9,7 @@ type foo struct {
 }
 
 func (f *foo) Double(arg int, reply *int) error {
-	*reply = arg*2
+	*reply = arg * 2
 	return nil
 }
 
