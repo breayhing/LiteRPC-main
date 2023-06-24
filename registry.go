@@ -22,7 +22,7 @@ func NewRegistry() *registry {
 	r := &registry{
 		servers: make(map[string]*ServerInfo),
 	}
-	http.Handle("/LiteRPC", r)
+	http.Handle("/SRPC", r)
 	return r
 }
 
