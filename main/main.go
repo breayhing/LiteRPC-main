@@ -18,6 +18,8 @@ func startServer(addr chan<- string, addrReg string) {
 	}
 	log.Println("server runs on", l.Addr().String())
 	server := LiteRPC.NewServer(time.Second)
+	// 注册服务
+	_ = server.Register(&Stringservice{})
 	_ = server.Register(&Mathservice{})
 	_ = server.PostRegistry(addrReg, l)
 	server.Accept(l)
@@ -36,7 +38,7 @@ func startRegistry(addr chan<- string) {
 
 func main() {
 	// 用于实现命令行参数的解析
-	terminalMessagePrint()
+	// terminalMessagePrint()
 	codeWay := "gob" // 这里选择编码方式为json
 	var err error
 	addr0 := make(chan string)
@@ -54,31 +56,28 @@ func main() {
 	time.Sleep(time.Second * 2)                                           // 等待服务端注册完成
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+
 	for i := 0; i < 5; i++ {
-		mathArg.Num1 = i
-		mathArg.Num2 = i * 2
+		mathArg.Num1 = i * 3
+		mathArg.Num2 = i
 		mathArg.HandleTime = 0
-		err = cli.Call(ctx, "Mathservice.Double", mathArg, &mathRet)
+		err = cli.Call(ctx, "Mathservice.Sub", mathArg, &mathRet)
 		if err != nil {
 			fmt.Println(err.Error())
 			continue
 		}
 		fmt.Println("return value:", mathRet)
 	}
-	fmt.Println("return value:", mathRet)
-
 	fmt.Println("second call start")
 	for i := 0; i < 5; i++ {
-		mathArg.Num1 = i
-		mathArg.Num2 = i * 2
-		mathArg.HandleTime = 0
-		err = cli.Call(ctx, "Mathservice.Double", mathArg, &mathRet)
+		err = cli.Call(ctx, "Stringservice.Compare", stringArg, &stringRet)
 		if err != nil {
 			fmt.Println(err.Error())
 			continue
 		}
-		fmt.Println("return value:", mathRet)
+		fmt.Println("return value:", stringRet)
 	}
+
 	cancel()
 	time.Sleep(time.Second * 2)
 }

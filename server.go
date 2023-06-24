@@ -64,7 +64,7 @@ func (s *Server) ServeConn(conn io.ReadWriteCloser) {
 		log.Println("rpc server: parsing option error")
 		return
 	}
-	log.Println("newCodecFunc: ", newCodecFunc)
+	// log.Println("newCodecFunc: ", newCodecFunc)
 	s.ServeCodec(newCodecFunc(conn))
 }
 
@@ -94,7 +94,9 @@ func (s *Server) ServeCodec(c codec.Codec) {
 			return
 		}
 		serve := servei.(*service)
+		// log.Println("serve: ", serve)
 		methodTyp := serve.getMethod(serviceMethodStrings[1])
+		// log.Println("methodTyp: ", methodTyp)
 		if methodTyp == nil {
 			log.Println("rpc server: request method unavailable")
 			err = errors.New("rpc server: request method unavailable")

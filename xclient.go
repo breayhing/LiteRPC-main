@@ -123,13 +123,14 @@ func (xc *xClient) getServers(codecWay string) {
 }
 
 func (xc *xClient) Call(ctx context.Context, serviceMethod string, argv, replyv interface{}) error {
+	// log.Println("replyv:", replyv)
+	log.Println("argv:", argv)
 	var idx int
 	//获取服务地址
 	if len(xc.addrs) == 0 {
 		return errors.New("rpc xclient error: not server available")
 	}
 	var addr string
-	// log.Println("xc.mode:", xc.mode)
 	switch xc.mode {
 	case RandomSelect:
 		// log.Println("random select")

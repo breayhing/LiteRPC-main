@@ -1,10 +1,13 @@
 package main
 
-import "strings"
+import (
+	"strings"
+	"time"
+)
 
 type Stringservice struct{}
 
-type stringArgs struct {
+type StringArgs struct {
 	String1    string
 	String2    string
 	HandleTime float32
@@ -20,41 +23,40 @@ const (
 	StringModeToLower
 )
 
-var stringArg = &stringArgs{
+var stringArg = &StringArgs{
 	String1:    "hELLo",
 	String2:    "wORLd",
 	HandleTime: 1,
 }
 var stringRet string
 
-func (f *Stringservice) Concat(arg stringArgs, reply *string) error {
-	*reply = arg.String1 + arg.String2
+// 添加方法要保证首字母大写
+func (f *Stringservice) ToUpper(arg StringArgs, reply *string) error {
+	totalString := arg.String1 + arg.String2
+	*reply = strings.ToUpper(totalString)
+	time.Sleep(time.Second * time.Duration(arg.HandleTime))
 	return nil
 }
 
-func (f *Stringservice) Compare(arg stringArgs, reply *string) error {
+func (f *Stringservice) ToLower(arg StringArgs, reply *string) error {
+	totalString := arg.String1 + arg.String2
+	*reply = strings.ToLower(totalString)
+	time.Sleep(time.Second * time.Duration(arg.HandleTime))
+	return nil
+}
+
+func (f *Stringservice) Concat(arg StringArgs, reply *string) error {
+	*reply = arg.String1 + arg.String2
+	time.Sleep(time.Second * time.Duration(arg.HandleTime))
+	return nil
+}
+
+func (f *Stringservice) Compare(arg StringArgs, reply *string) error {
 	if arg.String1 > arg.String2 {
 		*reply = arg.String1
 	} else {
 		*reply = arg.String2
 	}
-	return nil
-}
-
-func (f *Stringservice) totalLength(arg stringArgs, reply *string) error {
-	totalString := arg.String1 + arg.String2
-	*reply = string(len(totalString))
-	return nil
-}
-
-func (f *Stringservice) toUpper(arg stringArgs, reply *string) error {
-	totalString := arg.String1 + arg.String2
-	*reply = strings.ToUpper(totalString)
-	return nil
-}
-
-func (f *Stringservice) toLower(arg stringArgs, reply *string) error {
-	totalString := arg.String1 + arg.String2
-	*reply = strings.ToLower(totalString)
+	time.Sleep(time.Second * time.Duration(arg.HandleTime))
 	return nil
 }
