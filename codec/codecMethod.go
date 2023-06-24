@@ -20,7 +20,7 @@ func ParseOption(opt []byte) (NewCodecFunc, error) {
 		return nil, errors.New("codec error: error option len")
 	}
 	optNum := binary.BigEndian.Uint32(opt[0:4])
-	log.Println("optNum: ", optNum)
+	// log.Println("optNum: ", optNum)
 	if optNum != magicNum {
 		log.Println("codec error: magic number mismatch")
 		return nil, errors.New("codec error: magic number mismatch")

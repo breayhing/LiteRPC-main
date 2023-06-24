@@ -59,7 +59,7 @@ func (s *Server) ServeConn(conn io.ReadWriteCloser) {
 	}
 	//进行协议解析
 	newCodecFunc, err := codec.ParseOption(opt)
-	log.Println("option: ", opt)
+	// log.Println("option: ", opt)
 	if err != nil {
 		log.Println("rpc server: parsing option error")
 		return

@@ -6,13 +6,11 @@ import (
 )
 
 var serverHelp = `
-Usage: go run main.go [options]
-
+Usage: go run . [options]
 Options:
   -h, --help    Show help message
   -l, --listen  Server listen ip
   -p, --port    Server listen port
-  -d, --default Server listen default port:(ip:localhost  ,  port:8081), mathMode add
   -m, --mathMode Server run math mode
 	1: add   simply add two numbers
 	2: sub	 simply sub two numbers
@@ -27,7 +25,7 @@ Options:
 	5: toupper  add two strings and return the result string with all upper case
   example:
   	go run . -p 8081 -l localhost -m 1
-  	it means server listen localhost:8081 and run math mode add, args is defined in mathMethod.go
+  	it means server listen localhost:8081 and run math mode add, arg is defined in mathMethod.go
 `
 
 func terminalMessagePrint() {

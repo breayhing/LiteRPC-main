@@ -20,6 +20,13 @@ const (
 	MathModeMod
 )
 
+//执行参数
+var mathArg = &MathArgs{
+	Num1: 10,
+	Num2: 20,
+}
+var mathRet int //返回值
+
 func (f *Mathservice) Double(arg MathArgs, reply *int) error {
 	*reply = arg.Num1 + arg.Num2
 	time.Sleep(time.Second * time.Duration(arg.HandleTime))

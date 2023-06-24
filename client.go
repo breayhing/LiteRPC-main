@@ -39,7 +39,6 @@ func (c *client) Close() error {
 
 func (c *client) Dial(addr string, typ codec.Type) error {
 	opt := codec.GetOption(typ)
-	log.Println("opt:", opt, "addr:", addr, "typ:", typ, "codec:", "codec")
 	newCodecFunc, err := codec.ParseOption(opt)
 	if err != nil {
 		log.Println("rpc client: parsing option error:", err)
@@ -54,7 +53,7 @@ func (c *client) Dial(addr string, typ codec.Type) error {
 	writeBytes := 0
 	for writeBytes < len(opt) {
 		n, err := conn.Write(opt)
-		log.Println("writeBytes equals:", n, "err:", err)
+		// log.Println("writeBytes equals:", n, "err:", err)
 		if err != nil {
 			log.Println("rpc client: write option error:", err)
 			return err

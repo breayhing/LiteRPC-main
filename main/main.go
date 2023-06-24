@@ -36,9 +36,8 @@ func startRegistry(addr chan<- string) {
 
 func main() {
 	// 用于实现命令行参数的解析
-
 	terminalMessagePrint()
-	codeWay := "json"
+	codeWay := "gob" // 这里选择编码方式为json
 	var err error
 	addr0 := make(chan string)
 	addr1 := make(chan string)
@@ -53,37 +52,32 @@ func main() {
 	time.Sleep(time.Second * 2)                                           //等待服务端启动
 	cli := LiteRPC.NewXClient(LiteRPC.RoundRobinSelect, addrReg, codeWay) //这里选择使用的负载均衡算法
 	time.Sleep(time.Second * 2)                                           // 等待服务端注册完成
-	var ret int
 
-	arg := &MathArgs{
-		Num1: 10,
-		Num2: 20,
-	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-
-	fmt.Println("first call start")
 	for i := 0; i < 5; i++ {
-		arg.Num1 = i
-		arg.Num2 = i * 2
-		arg.HandleTime = 0.5
-		err = cli.Call(ctx, "Mathservice.Double", arg, &ret)
+		mathArg.Num1 = i
+		mathArg.Num2 = i * 2
+		mathArg.HandleTime = 0
+		err = cli.Call(ctx, "Mathservice.Double", mathArg, &mathRet)
 		if err != nil {
 			fmt.Println(err.Error())
 			continue
 		}
-		fmt.Println("return value:", ret)
+		fmt.Println("return value:", mathRet)
 	}
+	fmt.Println("return value:", mathRet)
+
 	fmt.Println("second call start")
 	for i := 0; i < 5; i++ {
-		arg.Num1 = i
-		arg.Num2 = i * 2
-		arg.HandleTime = 0
-		err = cli.Call(ctx, "Mathservice.Double", arg, &ret)
+		mathArg.Num1 = i
+		mathArg.Num2 = i * 2
+		mathArg.HandleTime = 0
+		err = cli.Call(ctx, "Mathservice.Double", mathArg, &mathRet)
 		if err != nil {
 			fmt.Println(err.Error())
 			continue
 		}
-		fmt.Println("return value:", ret)
+		fmt.Println("return value:", mathRet)
 	}
 	cancel()
 	time.Sleep(time.Second * 2)
