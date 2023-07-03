@@ -26,6 +26,9 @@ Options:
   example:
   	go run . -p 8081 -l localhost -m 1
   	it means server listen localhost:8081 and run math mode add, arg is defined in mathMethod.go
+
+	rpc closing 
+
 `
 
 func terminalMessagePrint() {
@@ -35,6 +38,7 @@ func terminalMessagePrint() {
 		fmt.Printf("args[%v]=[%v]\n", k, v)
 	}
 	terminalFunc(argc)
+	os.Exit(0)
 	return
 }
 
@@ -47,4 +51,5 @@ func terminalFunc(argc int) {
 	if os.Args[1] == "-h" || os.Args[1] == "--help" {
 		fmt.Fprint(os.Stderr, serverHelp)
 	}
+	//终止程序
 }

@@ -38,8 +38,9 @@ func startRegistry(addr chan<- string) {
 
 func main() {
 	// 用于实现命令行参数的解析
-	// terminalMessagePrint()
-	codeWay := "gob" // 这里选择编码方式为json
+	terminalMessagePrint()
+
+	codeWay := "json" // 这里选择编码方式为二进制字节流
 	var err error
 	addr0 := make(chan string)
 	addr1 := make(chan string)
@@ -57,6 +58,7 @@ func main() {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 
+	//这里开始执行rpc调用
 	for i := 0; i < 5; i++ {
 		mathArg.Num1 = i * 3
 		mathArg.Num2 = i
@@ -68,16 +70,16 @@ func main() {
 		}
 		fmt.Println("return value:", mathRet)
 	}
-	fmt.Println("second call start")
-	for i := 0; i < 5; i++ {
-		stringArg.HandleTime = 0
-		err = cli.Call(ctx, "Stringservice.Compare", stringArg, &stringRet)
-		if err != nil {
-			fmt.Println(err.Error())
-			continue
-		}
-		fmt.Println("return value:", stringRet)
-	}
+	// fmt.Println("second call start")
+	// for i := 0; i < 5; i++ {
+	// 	stringArg.HandleTime = 0
+	// 	err = cli.Call(ctx, "Stringservice.Compare", stringArg, &stringRet)
+	// 	if err != nil {
+	// 		fmt.Println(err.Error())
+	// 		continue
+	// 	}
+	// 	fmt.Println("return value:", stringRet)
+	// }
 
 	cancel()
 	time.Sleep(time.Second * 2)
