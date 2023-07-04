@@ -29,7 +29,6 @@ func startServer(addr chan<- string, addrReg string, ADDR string) {
 	_ = server.Register(&Mathservice{})
 	_ = server.PostRegistry(addrReg, l)
 	server.Accept(l)
-	// log.Println("serverseq:", serverseq)
 
 }
 
@@ -64,6 +63,7 @@ func main() {
 	addrReg := "http://localhost:9999/SRPC" // 注册中心地址
 	go startServer(addr1, addrReg, ADDR)
 	serverseq = true
+	log.Println("serverseq:", serverseq)
 	go startServer(addr2, addrReg, ADDR)
 	// 使用持续连接
 	time.Sleep(time.Second * 2) //等待服务端启动
