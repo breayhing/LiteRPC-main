@@ -14,3 +14,5 @@ var argv = ARGV{
 	methodType: "string",
 	nodeNum:    1,
 }
+
+// func (*ARGV) Option()

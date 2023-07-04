@@ -5,11 +5,20 @@ import (
 	"os"
 )
 
+var defaultOption = `
+
+	you have chosen the default option
+	the server will run on math mode and invoke Sub method
+	the client will run on random port and random ip
+	the server will run on random port and random ip
+`
+
 var serverHelp = `
 Usage: go run . [options]
 Options:
+  -d, --default  Server run default mode
   -h, --help    Show help message
-  -l, --listen  Server listen ip
+  -l, --listen  Server listen ip ,means the first server ip,the second server ip will be the first server ip + 1, and so on
   -p, --port    Server listen port
   -m, --mathMode Server run math mode
 	1: add   simply add two numbers
@@ -24,10 +33,19 @@ Options:
 	4: tolower  add two strings and return the result string with all lower case
 	5: toupper  add two strings and return the result string with all upper case
   example:
-  	go run . -p 8081 -l localhost -m 1
+  	go run . -p 8081 -l localhost -m 1 -n 2
   	it means server listen localhost:8081 and run math mode add, arg is defined in mathMethod.go
+	and there will be 2 client to invoke the server
 
 	rpc closing 
+
+`
+
+var errorInfo = `
+	it seems that you have input the wrong command, please check the help message below
+	go run . -p 8081 -l localhost -m 1
+	or
+	go run . -d
 
 `
 
@@ -38,7 +56,6 @@ func terminalMessagePrint() {
 		fmt.Printf("args[%v]=[%v]\n", k, v)
 	}
 	terminalFunc(argc)
-	os.Exit(0)
 	return
 }
 
@@ -50,6 +67,10 @@ func terminalFunc(argc int) {
 	}
 	if os.Args[1] == "-h" || os.Args[1] == "--help" {
 		fmt.Fprint(os.Stderr, serverHelp)
+		os.Exit(0)
 	}
-	//终止程序
+	if os.Args[1] == "-d" || os.Args[1] == "--default" {
+		fmt.Fprint(os.Stderr, defaultOption)
+	}
+	return
 }
