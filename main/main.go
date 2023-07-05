@@ -7,18 +7,36 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"strconv"
+	"sync"
 	"time"
 )
+
+// 实现自定义地址
+var ADDR string
+
+// 使用锁进行临界区保护
+var lock sync.Mutex
 
 var serverseq = false
 
 // 开启服务端
-func startServer(addr chan<- string, addrReg string, ADDR string) {
+func startServer(addrReg string, ADDR string) {
 	//如果ADDR为空，则默认为本地随机地址
-	if ADDR == "" || serverseq != false {
+	if ADDR == "" {
 		ADDR = ":0"
 	}
+	if serverseq != false {
+		lock.Lock()
+		newPort, _ := strconv.Atoi(Info.port)
+		newPort++
+		Info.port = strconv.Itoa(newPort)
+		fmt.Println("new port:", Info.port)
+		ADDR = Info.ip + ":" + Info.port
+		lock.Unlock()
+	}
 	l, err := net.Listen("tcp", ADDR)
+	fmt.Println("listen seems ok")
 	if err != nil {
 		log.Println("server network error", err)
 	}
@@ -29,7 +47,6 @@ func startServer(addr chan<- string, addrReg string, ADDR string) {
 	_ = server.Register(&Mathservice{})
 	_ = server.PostRegistry(addrReg, l)
 	server.Accept(l)
-
 }
 
 func startRegistry(addr chan<- string) {
@@ -48,23 +65,17 @@ func main() {
 	// 用于实现命令行参数的解析
 	terminalMessagePrint()
 
-	//实现自定义地址
-	ADDR := "localhost:9998"
-
 	codeWay := "json" // 这里选择编码方式为二进制字节流
 	var err error
 	addr0 := make(chan string)
-	addr1 := make(chan string)
-	addr2 := make(chan string)
 
 	go startRegistry(addr0)
 	<-addr0
 	//<-addr0读取到了注册中心的地址，并赋值给addrReg
 	addrReg := "http://localhost:9999/SRPC" // 注册中心地址
-	go startServer(addr1, addrReg, ADDR)
+	go startServer(addrReg, ADDR)
 	serverseq = true
-	log.Println("serverseq:", serverseq)
-	go startServer(addr2, addrReg, ADDR)
+	go startServer(addrReg, ADDR)
 	// 使用持续连接
 	time.Sleep(time.Second * 2) //等待服务端启动
 

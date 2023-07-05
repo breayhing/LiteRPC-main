@@ -15,8 +15,8 @@ type terminalInfo struct {
 }
 
 var Info = terminalInfo{
-	ip:         "localhost",
-	port:       "9998",
+	ip:         "",
+	port:       "",
 	nodeNum:    "1",
 	clientNum:  "1",
 	methodType: "math",
@@ -92,9 +92,15 @@ func terminalFunc(argc int) {
 	}
 	Info.port = os.Args[2]
 	Info.ip = os.Args[4]
+	ADDR = Info.ip + ":" + Info.port
+	fmt.Println("ADDR:", ADDR)
 	Info.methodType = os.Args[6]
 	Info.method = os.Args[7]
 	Info.nodeNum = os.Args[8]
 	Info.clientNum = os.Args[10]
 	return
+}
+
+func terminalCall() {
+
 }
