@@ -17,7 +17,7 @@ import (
 
 type SelectMode int
 
-type xClient struct {
+type Xclient struct {
 	addrRegistry string
 	timeout      time.Duration
 	mode         SelectMode
@@ -36,8 +36,8 @@ const (
 	ConsistentHash
 )
 
-func NewXClient(s SelectMode, regAddr string, codecWay string) *xClient {
-	c := &xClient{
+func NewXClient(s SelectMode, regAddr string, codecWay string) *Xclient {
+	c := &Xclient{
 		addrRegistry: regAddr,
 		timeout:      60 * time.Second,
 		r:            rand.New(rand.NewSource(time.Now().UnixNano())),
@@ -51,7 +51,7 @@ func NewXClient(s SelectMode, regAddr string, codecWay string) *xClient {
 	return c
 }
 
-func (xc *xClient) Close() error {
+func (xc *Xclient) Close() error {
 	xc.mu.Lock()
 	defer xc.mu.Unlock()
 	for k, cli := range xc.clients {
@@ -62,7 +62,7 @@ func (xc *xClient) Close() error {
 	return nil
 }
 
-func (xc *xClient) Dial(addr string, typ codec.Type) (err error) {
+func (xc *Xclient) Dial(addr string, typ codec.Type) (err error) {
 	xc.mu.Lock()
 	defer xc.mu.Unlock()
 	cli, ok := xc.clients[addr]
@@ -84,7 +84,7 @@ func (xc *xClient) Dial(addr string, typ codec.Type) (err error) {
 	return nil
 }
 
-func (xc *xClient) DialServers(servers []string, co codec.Type) (n int, err error) {
+func (xc *Xclient) DialServers(servers []string, co codec.Type) (n int, err error) {
 	for _, s := range servers {
 		err = xc.Dial(s, co)
 		if err == nil {
@@ -96,7 +96,7 @@ func (xc *xClient) DialServers(servers []string, co codec.Type) (n int, err erro
 	return
 }
 
-func (xc *xClient) getServers(codecWay string) {
+func (xc *Xclient) getServers(codecWay string) {
 	for {
 		resp, err := http.Get(xc.addrRegistry)
 		if err == nil {
@@ -122,7 +122,7 @@ func (xc *xClient) getServers(codecWay string) {
 
 }
 
-func (xc *xClient) Call(ctx context.Context, serviceMethod string, argv, replyv interface{}) error {
+func (xc *Xclient) Call(ctx context.Context, serviceMethod string, argv, replyv interface{}) error {
 	// log.Println("replyv:", replyv)
 	log.Println("argv:", argv)
 	var idx int

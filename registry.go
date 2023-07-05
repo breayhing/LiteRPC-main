@@ -1,7 +1,6 @@
 package SRPC
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 	"sync"
@@ -33,7 +32,7 @@ func (r *registry) getAliveServers() []string {
 		servers[i] = k
 		i += 1
 	}
-	fmt.Println(servers)
+	// fmt.Println("all alive servers are", servers)
 	return servers
 }
 

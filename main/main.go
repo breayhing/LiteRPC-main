@@ -65,6 +65,9 @@ func main() {
 	// 用于实现命令行参数的解析
 	terminalMessagePrint()
 
+	serverNum, _ := strconv.Atoi(Info.nodeNum)
+	clientNum, _ := strconv.Atoi(Info.clientNum)
+
 	codeWay := "json" // 这里选择编码方式为二进制字节流
 	var err error
 	addr0 := make(chan string)
@@ -73,13 +76,26 @@ func main() {
 	<-addr0
 	//<-addr0读取到了注册中心的地址，并赋值给addrReg
 	addrReg := "http://localhost:9999/SRPC" // 注册中心地址
-	go startServer(addrReg, ADDR)
-	serverseq = true
-	go startServer(addrReg, ADDR)
+
+	log.Println("server number:", serverNum)
+	for serverNum > 0 {
+		// 启动协程
+		go func() {
+			startServer(addrReg, ADDR)
+			serverseq = true
+		}()
+		serverNum--
+	}
+
 	// 使用持续连接
 	time.Sleep(time.Second * 2) //等待服务端启动
 
-	//这里选择使用的负载均衡算法，此处为轮询算法
+	log.Println("client number:", clientNum)
+	//使用切片增添新的客户端
+	var clients []SRPC.Xclient
+	for i := 0; i < clientNum; i++ {
+		clients = append(clients, *SRPC.NewXClient(SRPC.RoundRobinSelect, addrReg, codeWay))
+	}
 
 	//新建一个客户端
 	cli := SRPC.NewXClient(SRPC.RoundRobinSelect, addrReg, codeWay)
@@ -102,7 +118,6 @@ func main() {
 		}
 		fmt.Println("return value:", mathRet)
 	}
-	fmt.Println("second call start")
 	for i := 0; i < 5; i++ {
 		stringArg.HandleTime = 0
 		err = client2.Call(ctx, "Stringservice.Compare", stringArg, &stringRet)

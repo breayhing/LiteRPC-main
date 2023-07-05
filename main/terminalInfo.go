@@ -24,11 +24,12 @@ var Info = terminalInfo{
 }
 
 var defaultOption = `
+you have chosen the default option
+the server will run on math mode and invoke Sub method
+the client will run on random port and random ip
+the server will run on random port and random ip
 
-	you have chosen the default option
-	the server will run on math mode and invoke Sub method
-	the client will run on random port and random ip
-	the server will run on random port and random ip
+
 `
 
 var serverHelp = `
@@ -90,10 +91,13 @@ func terminalFunc(argc int) {
 		fmt.Fprint(os.Stderr, serverHelp)
 		os.Exit(0)
 	}
+	//选择具体调用的方法以及节点个数
+	terminalCall()
+
 	Info.port = os.Args[2]
 	Info.ip = os.Args[4]
 	ADDR = Info.ip + ":" + Info.port
-	fmt.Println("ADDR:", ADDR)
+	// fmt.Println("initial ADDR:", ADDR)
 	Info.methodType = os.Args[6]
 	Info.method = os.Args[7]
 	Info.nodeNum = os.Args[8]
