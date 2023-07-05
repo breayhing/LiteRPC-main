@@ -125,6 +125,7 @@ func (xc *Xclient) getServers(codecWay string) {
 func (xc *Xclient) Call(ctx context.Context, serviceMethod string, argv, replyv interface{}) error {
 	// log.Println("replyv:", replyv)
 	log.Println("argv:", argv)
+	log.Println(xc)
 	var idx int
 	//获取服务地址
 	if len(xc.addrs) == 0 {

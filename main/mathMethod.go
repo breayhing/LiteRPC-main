@@ -12,16 +12,6 @@ type MathArgs struct {
 	HandleTime float32
 }
 
-type MathMode int
-
-const (
-	MathModeDouble MathMode = iota
-	MathModeSub
-	MathModeMul
-	MathModeDiv
-	MathModeMod
-)
-
 // 执行参数
 var mathArg = &MathArgs{
 	Num1:       10,
