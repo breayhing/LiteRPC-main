@@ -90,7 +90,8 @@ func (xc *Xclient) DialServers(servers []string, co codec.Type) (n int, err erro
 		if err == nil {
 			n += 1
 			xc.addrs = append(xc.addrs, s)
-			xc.ch.Add(s)
+			// log.Println(" server now:", xc.addrs)
+			// xc.ch.Add(s)
 		}
 	}
 	return
@@ -98,6 +99,7 @@ func (xc *Xclient) DialServers(servers []string, co codec.Type) (n int, err erro
 
 func (xc *Xclient) getServers(codecWay string) {
 	for {
+		//注册中心获取服务地址
 		resp, err := http.Get(xc.addrRegistry)
 		if err == nil {
 			serversString := resp.Header.Get("rpc-servers")
@@ -111,6 +113,7 @@ func (xc *Xclient) getServers(codecWay string) {
 				_, _ = xc.DialServers(servers, codec.JsonCodec)
 			}
 		}
+		// log.Print("xc在获取服务后", xc)
 		if xc.isClose {
 			break
 		}
@@ -122,10 +125,13 @@ func (xc *Xclient) getServers(codecWay string) {
 
 }
 
+func (xc *Xclient) Say() {
+	log.Print(xc)
+	return
+}
+
 func (xc *Xclient) Call(ctx context.Context, serviceMethod string, argv, replyv interface{}) error {
-	// log.Println("replyv:", replyv)
-	log.Println("argv:", argv)
-	log.Println(xc)
+	// log.Println("xc now", xc)
 	var idx int
 	//获取服务地址
 	if len(xc.addrs) == 0 {

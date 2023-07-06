@@ -17,8 +17,8 @@ type terminalInfo struct {
 var Info = terminalInfo{
 	ip:         "",
 	port:       "",
-	nodeNum:    "1",
-	clientNum:  "1",
+	nodeNum:    "2",
+	clientNum:  "2",
 	methodType: "math",
 	method:     "1",
 }
