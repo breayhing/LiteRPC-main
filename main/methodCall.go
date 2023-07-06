@@ -7,7 +7,7 @@ import (
 
 var err error
 
-func methodType() {
+func methodCall() {
 	var function = os.Args[6]
 	if Info.methodType == "-m" {
 		fmt.Println("math mode")
@@ -37,20 +37,18 @@ func mathCall(function string) {
 	}
 
 	//默认是一个循环进行计算
-	for i := 0; i < 3; i++ {
-		mathArg.Num1 = i * 3
-		mathArg.Num2 = i
-		mathArg.HandleTime = 0
-		for j := 0; j < Clientnum; i++ {
-			//这里客户端调用服务端的方法
-			err = Clients[j].Call(Ctx, "Mathservice."+function, mathArg, &mathRet)
+	for i := 0; i < Clientnum; i++ {
+		// Clients[i].Say()
+		for j := 1; j < 5; j++ {
+			mathARG := &MathArgs{Num1: 80, Num2: 20, HandleTime: 0}
+			mathRET := mathRet
+			err = Clients[i].Call(Ctx, "Mathservice."+function, mathARG, &mathRET)
 			if err != nil {
 				fmt.Println(err.Error())
 				continue
 			}
-			fmt.Println("return value:", mathRet)
+			fmt.Println("return value:", mathRET)
 		}
-		fmt.Println("return value:", mathRet)
 	}
 }
 
@@ -65,17 +63,17 @@ func stringCall(function string) {
 	case "4":
 		function = "Compare"
 	}
-	for i := 0; i < 3; i++ {
-		stringArg.HandleTime = 0
-		for j := 0; j < Clientnum; i++ {
-			//这里客户端调用服务端的方法
-			err = Clients[j].Call(Ctx, "Stringservice."+function, stringArg, &stringRet)
+	for i := 0; i < Clientnum; i++ {
+		// Clients[i].Say()
+		for j := 1; j < 5; j++ {
+			stringArg := &StringArgs{String1: "hello", String2: "world", HandleTime: 0}
+			stringRet := stringRet
+			err = Clients[i].Call(Ctx, "Stringservice."+function, stringArg, &stringRet)
 			if err != nil {
 				fmt.Println(err.Error())
 				continue
 			}
 			fmt.Println("return value:", stringRet)
 		}
-		fmt.Println("return value:", stringRet)
 	}
 }

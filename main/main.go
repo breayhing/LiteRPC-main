@@ -3,7 +3,6 @@ package main
 import (
 	"SRPC"
 	"context"
-	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -106,19 +105,20 @@ func main() {
 
 	Ctx, Cancel = context.WithTimeout(context.Background(), time.Second*3)
 
-	for i := 0; i < Clientnum; i++ {
-		// Clients[i].Say()
-		for j := 1; j < 5; j++ {
-			mathARG := &MathArgs{Num1: 80, Num2: 20, HandleTime: 0}
-			mathRET := mathRet
-			err = Clients[i].Call(Ctx, "Mathservice.Sub", mathARG, &mathRET)
-			if err != nil {
-				fmt.Println(err.Error())
-				continue
-			}
-			fmt.Println("return value:", mathRET)
-		}
-	}
+	methodCall()
+	// for i := 0; i < Clientnum; i++ {
+	// 	// Clients[i].Say()
+	// 	for j := 1; j < 5; j++ {
+	// 		mathARG := &MathArgs{Num1: 80, Num2: 20, HandleTime: 0}
+	// 		mathRET := mathRet
+	// 		err = Clients[i].Call(Ctx, "Mathservice.Sub", mathARG, &mathRET)
+	// 		if err != nil {
+	// 			fmt.Println(err.Error())
+	// 			continue
+	// 		}
+	// 		fmt.Println("return value:", mathRET)
+	// 	}
+	// }
 
 	Cancel()
 }

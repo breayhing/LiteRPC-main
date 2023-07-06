@@ -26,7 +26,7 @@ func (f *Mathservice) Pow(arg MathArgs, reply *int) error {
 	return nil
 }
 
-func (f *Mathservice) Double(arg MathArgs, reply *int) error {
+func (f *Mathservice) Add(arg MathArgs, reply *int) error {
 	*reply = arg.Num1 + arg.Num2
 	time.Sleep(time.Second * time.Duration(arg.HandleTime))
 	return nil
